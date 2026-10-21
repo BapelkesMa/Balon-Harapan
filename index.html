@@ -33,7 +33,7 @@ button{font:inherit;border:0;border-radius:12px;padding:.7rem 1.2rem;background:
 
 <script>
 /* ====== PENGATURAN: tempel link CSV dari "Publikasikan ke web" Google Sheet di antara tanda kutip ====== */
-var CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTb0TgxMOvbr-CF1LzEhC-2BxyyYEjEJxdXvCzqAvuNT3YfLn5lSHx9VyD1IPUH08fmkcPZC-_u8LGW/pub?gid=2092849480&single=true&output=csv";
+var CSV_URL = "";
 var KOLOM_HARAPAN = 1;      /* 0 = kolom A (stempel waktu), 1 = kolom B (harapan) */
 var REFRESH_DETIK = 20;
 /* ============================================================================================ */
@@ -41,12 +41,12 @@ var REFRESH_DETIK = 20;
 var COLORS=["#ef5b5b","#f5a623","#f7d34a","#4cc38a","#3fa9f5","#9b6bf2","#f06ab0"];
 var $=function(i){return document.getElementById(i)};
 var qs=new URLSearchParams(location.search); if(qs.get("csv")) CSV_URL=qs.get("csv");
-var DEMO=["Semoga Bapelkes Mataram makin hebat dan kompak!","Semoga setiap pelatihan membawa perubahan nyata.","Selamat ulang tahun Bapelkes Mataram!"];
+var DEMO=["Semoga bisa menjadi panutan balai lain, jaya dan sukses selalu🫶🏻", "semoga bapelkes mataram semakin mendunia", "Semoga menjadi BBPK dengan sarpras dan SDM yang lengkap", "Bapelkes Mataram semakin Profesional, Inovatif dan Solid", "Semoga bapelkes mataram makin sukses", "Semoga tim Bapelkes Mataram semakin kompak dengan hadirnya pimpinan baru. Semua pegawai kerja dengan ikhlas, jujur, dan penuh dedikasi.", "Sukses bersama demi Indonesia yg berkualitas", "Semoga kedepannya lebih baik,bahagia,banyak perubahan,dan lebih banyak prestasi bagi pegawai bapelkes mataram", "Menjadi semakin maju, bisa menjadi tempat utk bertumbuh bersama yang nyaman.", "Semoga bapelkes Mataram makin jaya dan berakhlak", "Semoga tetap menjadi rumah yang nyaman..", "Semoga di Bapelkes ini, saya bisa kembali menjadi fungsional lagi he he", "Semakin inovatif, dan terus konsisten menjadi pusat pelatihan kesehatan", "Semoga jaya teruss", "Bapelkes semakin Maju dan terdepan dalam menyelenggarakan pelatihan Kesehatan", "Bapelkes Mataram semakin Maju & Berkembang", "Semoga lebih baik kedepannya🎉🥰😇", "Semoga bapelkes mtrm punya 10 ruang kls...dan laboratorium kls selain kebencanaan", "Tetap maju maju maju dan JAYA SELALUUUWWWWWWW", "Dengan kepemimpinan yang baru semoga bapelkes menjadi yang terbaik dari yang baik😊😊", "Semoga Bapelkes Mataram Semakin Maju dan bermanfaat bagi Masyarkat Indonesia, khususnya NTB...aamiienn", "Selamat ulang tahun bapelkes mataram semoga semakin baik dalam segala hal", "Semoga semakin baik kedepannya", "Semoga bapelkes Mataram bisa lebih maju dan lebih baik ke depan nya 😊😊", "Saya harap dapat membawa kesejahteraan pegawai lebih baik dan efisien", "Semoga kedepannya lebih baik", "Semoga semakin profesional, inovatif dan tetap solid.", "Semoga fasilitas dan perangkat yang mendukung pekerjaan dan kinerja pegawai dapat tersedia cepat dan baik, seperti air, dan laptop karena sudah tidak memadai", "Jadilah yang lebih baik lagi", "Menuju Bapelkes Emas 2027", "Semoga menjadi tempat yang nyaman untuk bertumbuh", "Semoga bapelkes Mataram menjadi tempat dalam mencetak SDM Kesehatan yang profesional dan berkompeten. Menjadi Balai pelatihan yang semakin maju dan berkembang serta berkontribusi untuk negara", "Semoga kedepannya lebih baik", "Semoga kedepanya menjadi lebih baik", "Semoga jaya selalu", "Semoga semakin solid & terus bertumbuh menjadi balai pelatihan rujukan di Indonesia khususnya terkait disasar manajemen"];
 var wishes=[],live={},poppedSet={},tm;
-try{ (JSON.parse(localStorage.getItem("bh-popped")||"[]")).forEach(function(t){poppedSet[t]=1}); }catch(e){}
-function savePopped(){ try{ localStorage.setItem("bh-popped",JSON.stringify(Object.keys(poppedSet))) }catch(e){} }
+try{ (JSON.parse(localStorage.getItem("bh-popped-v2")||"[]")).forEach(function(t){poppedSet[t]=1}); }catch(e){}
+function savePopped(){ try{ localStorage.setItem("bh-popped-v2",JSON.stringify(Object.keys(poppedSet))) }catch(e){} }
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function info(){ var left=wishes.filter(function(w){return !poppedSet[w.text]}).length; $("info").textContent="Ketuk balon untuk memecahkannya • Tersisa "+left+" dari "+wishes.length+" balon"+(CSV_URL?"":" (mode contoh)"); }
+function info(){ var left=wishes.filter(function(w,k){return !poppedSet[k]}).length; $("info").textContent="Ketuk balon untuk memecahkannya • Tersisa "+left+" dari "+wishes.length+" balon"+""; }
 
 function csv(s){var rows=[],row=[],cur="",q=false;
   for(var i=0;i<s.length;i++){var c=s[i];
@@ -72,7 +72,7 @@ function spawn(i,spread){
 function popOne(i){
   var el=live[i]; if(!el) return; delete live[i];
   el.style.animationDelay="0s"; el.style.animationDuration=".35s"; el.classList.add("pop"); setTimeout(function(){el.remove()},350);
-  var t=wishes[i].text; poppedSet[t]=1; savePopped();
+  var t=wishes[i].text; poppedSet[i]=1; savePopped();
   var w=$("wish"); w.innerHTML="<small>Harapan untuk Bapelkes Mataram</small>"+esc(t);
   w.classList.remove("hide"); clearTimeout(tm); tm=setTimeout(function(){w.classList.add("hide")},12000);
   info();
@@ -84,7 +84,7 @@ function merge(texts,first){
   var have={}; wishes.forEach(function(w){have[w.text]=(have[w.text]||0)+1});
   texts.forEach(function(t){
     if(have[t]>0){have[t]--;return}
-    wishes.push({text:t}); var i=wishes.length-1; if(!poppedSet[t]) spawn(i,first);
+    wishes.push({text:t}); var i=wishes.length-1; if(!poppedSet[i]) spawn(i,first);
   });
   info();
 }
