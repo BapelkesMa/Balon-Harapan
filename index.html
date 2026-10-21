@@ -1,112 +1,350 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Balon Harapan – HUT ke-5 Bapelkes Mataram</title>
+<title>Balon Harapan HUT ke-5 Bapelkes Mataram</title>
+<meta name="description" content="Ketuk balon untuk membaca harapan keluarga besar Bapelkes Mataram di HUT ke-5.">
 <style>
-:root{--bg:#eef7ff;--bg2:#fdf3e4;--ink:#12304a;--mut:#5b7186;--card:#fff;--acc:#0e8f6e;--line:#cfe0ee}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1b2b;--bg2:#12283d;--ink:#e8f1f9;--mut:#9bb0c3;--card:#16314a;--acc:#35c79d;--line:#27455f}}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;overflow:hidden}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg),var(--bg2))}
-.top{position:absolute;z-index:5;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + .8rem) 1rem .6rem;pointer-events:none}
-.top h1{margin:0;font-size:1.15rem}
-.top p{margin:.2rem 0 0;color:var(--mut);font-size:.9rem}
-.bar{position:absolute;z-index:5;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 1rem);display:flex;justify-content:center}
-button{font:inherit;border:0;border-radius:12px;padding:.7rem 1.2rem;background:var(--acc);color:#fff;font-weight:600;cursor:pointer}
-.balloon{position:absolute;left:0;top:0;width:74px;height:92px;cursor:pointer;will-change:transform}
-.b{position:relative;width:100%;height:100%;border-radius:50% 50% 48% 48%}
-.b::after{content:"";position:absolute;left:50%;bottom:-34px;width:2px;height:34px;background:var(--mut);opacity:.6}
-.b::before{content:"";position:absolute;left:18%;top:14%;width:16%;height:22%;border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(25deg)}
-.b.pop{animation:pop .35s ease-out forwards}
-@keyframes pop{to{transform:scale(1.8);opacity:0}}
-#wish{position:absolute;z-index:6;left:50%;top:46%;transform:translate(-50%,-50%);width:min(90vw,640px);background:var(--card);border:2px solid var(--acc);border-radius:20px;padding:1.4rem 1.5rem;text-align:center;font-size:clamp(1.1rem,3vw,1.6rem);line-height:1.45;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-#wish small{display:block;color:var(--mut);font-size:.8rem;margin-bottom:.5rem}
-.hide{display:none!important}
+  :root{
+    --sky-top:#5fb7ff;
+    --sky-bottom:#dff3ff;
+    --ink:#123047;
+    --card:#ffffff;
+    --accent:#ff5a7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 100%);
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;
+  }
+  /* awan */
+  .cloud{position:fixed;background:#fff;border-radius:100px;opacity:.75;z-index:0;filter:blur(1px)}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud.c1{width:160px;height:46px;top:18%;left:-200px;animation:drift 70s linear infinite}
+  .cloud.c1::before{width:70px;height:70px;top:-34px;left:24px}
+  .cloud.c1::after{width:56px;height:56px;top:-24px;left:80px}
+  .cloud.c2{width:120px;height:36px;top:52%;left:-160px;animation:drift 95s linear infinite;animation-delay:-40s}
+  .cloud.c2::before{width:52px;height:52px;top:-26px;left:18px}
+  .cloud.c2::after{width:44px;height:44px;top:-18px;left:60px}
+  .cloud.c3{width:200px;height:54px;top:76%;left:-240px;animation:drift 120s linear infinite;animation-delay:-80s}
+  .cloud.c3::before{width:84px;height:84px;top:-42px;left:30px}
+  .cloud.c3::after{width:66px;height:66px;top:-30px;left:104px}
+  @keyframes drift{to{transform:translateX(calc(100vw + 300px))}}
+
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:20;
+    padding:calc(12px + env(safe-area-inset-top)) 16px 10px;
+    text-align:center;
+    background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0));
+    pointer-events:none;
+  }
+  header h1{font-size:clamp(20px,5.2vw,32px);font-weight:800;letter-spacing:.3px}
+  header h1 span{color:var(--accent)}
+  header p{font-size:clamp(13px,3.4vw,16px);margin-top:4px;opacity:.85}
+  .counter{
+    display:inline-block;margin-top:8px;padding:4px 12px;border-radius:999px;
+    background:rgba(255,255,255,.9);font-size:13px;font-weight:600;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)
+  }
+
+  #sky{position:fixed;inset:0;z-index:5}
+  .balloon{
+    position:absolute;left:0;top:0;width:64px;height:120px;
+    cursor:pointer;will-change:transform;
+    touch-action:manipulation;
+  }
+  .balloon .body{
+    position:absolute;left:0;top:0;width:64px;height:78px;
+    border-radius:50% 50% 48% 48% / 55% 55% 45% 45%;
+    background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75) 0 9%,rgba(255,255,255,0) 22%),var(--c);
+    box-shadow:inset -8px -10px 0 rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.12);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.95);font-weight:800;font-size:18px;
+    text-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .balloon .knot{
+    position:absolute;left:27px;top:74px;width:0;height:0;
+    border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--c);
+  }
+  .balloon .string{
+    position:absolute;left:31px;top:82px;width:2px;height:38px;
+    background:linear-gradient(180deg,rgba(18,48,71,.5),rgba(18,48,71,0));
+    transform-origin:top;animation:sway 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes sway{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+  .balloon.read .body::after{
+    content:"✓";position:absolute;right:-4px;top:-4px;width:20px;height:20px;border-radius:50%;
+    background:#fff;color:#18a058;font-size:13px;display:flex;align-items:center;justify-content:center;
+    text-shadow:none;box-shadow:0 1px 4px rgba(0,0,0,.2)
+  }
+  .balloon.hidden{visibility:hidden;pointer-events:none}
+
+  .piece{
+    position:fixed;width:8px;height:12px;border-radius:2px;z-index:30;pointer-events:none;
+    animation:burst .9s ease-out forwards;
+  }
+  @keyframes burst{
+    0%{transform:translate(0,0) rotate(0);opacity:1}
+    100%{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}
+  }
+  .pop-text{
+    position:fixed;z-index:31;font-weight:900;font-size:22px;color:var(--accent);pointer-events:none;
+    animation:popword .6s ease-out forwards;transform:translate(-50%,-50%)
+  }
+  @keyframes popword{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-90%) scale(1)}}
+
+  .overlay{
+    position:fixed;inset:0;z-index:40;background:rgba(10,30,50,.45);
+    display:none;align-items:center;justify-content:center;padding:16px;
+  }
+  .overlay.show{display:flex;animation:fade .2s ease-out}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .card{
+    background:var(--card);border-radius:20px;max-width:440px;width:100%;
+    padding:28px 22px 20px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.25);
+    border-top:8px solid var(--cc,#ff5a7a);
+    animation:rise .3s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes rise{from{transform:translateY(30px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+  .card .label{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.6}
+  .card .wish{font-size:clamp(18px,4.8vw,22px);line-height:1.5;margin:14px 0 22px;font-weight:600;
+    user-select:text;-webkit-user-select:text;word-wrap:break-word}
+  .card button{
+    border:0;border-radius:999px;padding:12px 22px;font-size:15px;font-weight:700;cursor:pointer;
+    background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(255,90,122,.4)
+  }
+
+  .actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    padding:10px 16px calc(14px + env(safe-area-inset-bottom));
+    display:flex;justify-content:center;
+    background:linear-gradient(0deg,rgba(255,255,255,.75),rgba(255,255,255,0));
+    pointer-events:none;
+  }
+  .actions button{
+    pointer-events:auto;border:0;border-radius:999px;padding:12px 22px;font-size:15px;font-weight:700;
+    background:#fff;color:var(--ink);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.15)
+  }
+  .actions button:active,.card button:active{transform:scale(.96)}
 </style>
 </head>
 <body>
-<div class="top"><h1>🎈 Balon Harapan Bapelkes Mataram</h1><p id="info">Memuat…</p></div>
-<div id="wish" class="hide"></div>
-<div class="bar"><button id="rnd">Pecahkan balon acak</button></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+
+  <header>
+    <h1>🎈 Balon <span>Harapan</span></h1>
+    <p>HUT ke-5 Bapelkes Mataram · ketuk balon untuk membaca harapan</p>
+    <div class="counter" id="counter">Sudah dibaca 0 dari 36 harapan</div>
+  </header>
+
+  <div id="sky" aria-label="Balon harapan"></div>
+
+  <div class="actions">
+    <button id="randomBtn" type="button">🎯 Pecahkan balon acak</button>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="wishLabel">
+    <div class="card" id="card">
+      <div class="label" id="wishLabel">Harapan #1</div>
+      <div class="wish" id="wishText"></div>
+      <button type="button" id="closeBtn">Tutup</button>
+    </div>
+  </div>
 
 <script>
-/* ====== PENGATURAN: tempel link CSV dari "Publikasikan ke web" Google Sheet di antara tanda kutip ====== */
-var CSV_URL = "";
-var KOLOM_HARAPAN = 1;      /* 0 = kolom A (stempel waktu), 1 = kolom B (harapan) */
-var REFRESH_DETIK = 20;
-/* ============================================================================================ */
 (function(){
-var COLORS=["#ef5b5b","#f5a623","#f7d34a","#4cc38a","#3fa9f5","#9b6bf2","#f06ab0"];
-var $=function(i){return document.getElementById(i)};
-var qs=new URLSearchParams(location.search); if(qs.get("csv")) CSV_URL=qs.get("csv");
-var DEMO=["Semoga bisa menjadi panutan balai lain, jaya dan sukses selalu🫶🏻", "semoga bapelkes mataram semakin mendunia", "Semoga menjadi BBPK dengan sarpras dan SDM yang lengkap", "Bapelkes Mataram semakin Profesional, Inovatif dan Solid", "Semoga bapelkes mataram makin sukses", "Semoga tim Bapelkes Mataram semakin kompak dengan hadirnya pimpinan baru. Semua pegawai kerja dengan ikhlas, jujur, dan penuh dedikasi.", "Sukses bersama demi Indonesia yg berkualitas", "Semoga kedepannya lebih baik,bahagia,banyak perubahan,dan lebih banyak prestasi bagi pegawai bapelkes mataram", "Menjadi semakin maju, bisa menjadi tempat utk bertumbuh bersama yang nyaman.", "Semoga bapelkes Mataram makin jaya dan berakhlak", "Semoga tetap menjadi rumah yang nyaman..", "Semoga di Bapelkes ini, saya bisa kembali menjadi fungsional lagi he he", "Semakin inovatif, dan terus konsisten menjadi pusat pelatihan kesehatan", "Semoga jaya teruss", "Bapelkes semakin Maju dan terdepan dalam menyelenggarakan pelatihan Kesehatan", "Bapelkes Mataram semakin Maju & Berkembang", "Semoga lebih baik kedepannya🎉🥰😇", "Semoga bapelkes mtrm punya 10 ruang kls...dan laboratorium kls selain kebencanaan", "Tetap maju maju maju dan JAYA SELALUUUWWWWWWW", "Dengan kepemimpinan yang baru semoga bapelkes menjadi yang terbaik dari yang baik😊😊", "Semoga Bapelkes Mataram Semakin Maju dan bermanfaat bagi Masyarkat Indonesia, khususnya NTB...aamiienn", "Selamat ulang tahun bapelkes mataram semoga semakin baik dalam segala hal", "Semoga semakin baik kedepannya", "Semoga bapelkes Mataram bisa lebih maju dan lebih baik ke depan nya 😊😊", "Saya harap dapat membawa kesejahteraan pegawai lebih baik dan efisien", "Semoga kedepannya lebih baik", "Semoga semakin profesional, inovatif dan tetap solid.", "Semoga fasilitas dan perangkat yang mendukung pekerjaan dan kinerja pegawai dapat tersedia cepat dan baik, seperti air, dan laptop karena sudah tidak memadai", "Jadilah yang lebih baik lagi", "Menuju Bapelkes Emas 2027", "Semoga menjadi tempat yang nyaman untuk bertumbuh", "Semoga bapelkes Mataram menjadi tempat dalam mencetak SDM Kesehatan yang profesional dan berkompeten. Menjadi Balai pelatihan yang semakin maju dan berkembang serta berkontribusi untuk negara", "Semoga kedepannya lebih baik", "Semoga kedepanya menjadi lebih baik", "Semoga jaya selalu", "Semoga semakin solid & terus bertumbuh menjadi balai pelatihan rujukan di Indonesia khususnya terkait disasar manajemen"];
-var wishes=[],live={},poppedSet={},tm;
-try{ (JSON.parse(localStorage.getItem("bh-popped-v2")||"[]")).forEach(function(t){poppedSet[t]=1}); }catch(e){}
-function savePopped(){ try{ localStorage.setItem("bh-popped-v2",JSON.stringify(Object.keys(poppedSet))) }catch(e){} }
-function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function info(){ var left=wishes.filter(function(w,k){return !poppedSet[k]}).length; $("info").textContent="Ketuk balon untuk memecahkannya • Tersisa "+left+" dari "+wishes.length+" balon"+""; }
+  var WISHES = [
+    "Semoga bisa menjadi panutan balai lain, jaya dan sukses selalu🫶🏻",
+    "semoga bapelkes mataram semakin mendunia",
+    "Semoga menjadi BBPK dengan sarpras dan SDM yang lengkap",
+    "Bapelkes Mataram semakin Profesional, Inovatif dan Solid",
+    "Semoga bapelkes mataram makin sukses",
+    "Semoga tim Bapelkes Mataram semakin kompak dengan hadirnya pimpinan baru. Semua pegawai kerja dengan ikhlas, jujur, dan penuh dedikasi.",
+    "Sukses bersama demi Indonesia yg berkualitas",
+    "Semoga kedepannya lebih baik,bahagia,banyak perubahan,dan lebih banyak prestasi bagi pegawai bapelkes mataram",
+    "Menjadi semakin maju, bisa menjadi tempat utk bertumbuh bersama yang nyaman.",
+    "Semoga bapelkes Mataram makin jaya dan berakhlak",
+    "Semoga tetap menjadi rumah yang nyaman..",
+    "Semoga di Bapelkes ini, saya bisa kembali menjadi fungsional lagi he he",
+    "Semakin inovatif, dan terus konsisten menjadi pusat pelatihan kesehatan",
+    "Semoga jaya teruss",
+    "Bapelkes semakin Maju dan terdepan dalam menyelenggarakan pelatihan Kesehatan",
+    "Bapelkes Mataram semakin Maju & Berkembang",
+    "Semoga lebih baik kedepannya🎉🥰😇",
+    "Semoga bapelkes mtrm punya 10 ruang kls...dan laboratorium kls selain kebencanaan",
+    "Tetap maju maju maju dan JAYA SELALUUUWWWWWWW",
+    "Dengan kepemimpinan yang baru semoga bapelkes menjadi yang terbaik dari yang baik😊😊",
+    "Semoga Bapelkes Mataram Semakin Maju dan bermanfaat bagi Masyarkat Indonesia, khususnya NTB...aamiienn",
+    "Selamat ulang tahun bapelkes mataram semoga semakin baik dalam segala hal",
+    "Semoga semakin baik kedepannya",
+    "Semoga bapelkes Mataram bisa lebih maju dan lebih baik ke depan nya 😊😊",
+    "Saya harap dapat membawa kesejahteraan pegawai lebih baik dan efisien",
+    "Semoga kedepannya lebih baik",
+    "Semoga semakin profesional, inovatif dan tetap solid.",
+    "Semoga fasilitas dan perangkat yang mendukung pekerjaan dan kinerja pegawai dapat tersedia cepat dan baik, seperti air, dan laptop karena sudah tidak memadai",
+    "Jadilah yang lebih baik lagi",
+    "Menuju Bapelkes Emas 2027",
+    "Semoga menjadi tempat yang nyaman untuk bertumbuh",
+    "Semoga bapelkes Mataram menjadi tempat dalam mencetak SDM Kesehatan yang profesional dan berkompeten. Menjadi Balai pelatihan yang semakin maju dan berkembang serta berkontribusi untuk negara",
+    "Semoga kedepannya lebih baik",
+    "Semoga kedepanya menjadi lebih baik",
+    "Semoga jaya selalu",
+    "Semoga semakin solid & terus bertumbuh menjadi balai pelatihan rujukan di Indonesia khususnya terkait disasar manajemen"
+  ];
 
-function csv(s){var rows=[],row=[],cur="",q=false;
-  for(var i=0;i<s.length;i++){var c=s[i];
-    if(q){ if(c==='"'){ if(s[i+1]==='"'){cur+='"';i++} else q=false } else cur+=c; }
-    else if(c==='"') q=true;
-    else if(c===","){row.push(cur);cur=""}
-    else if(c==="\n"||c==="\r"){ if(c==="\r"&&s[i+1]==="\n") i++; row.push(cur);rows.push(row);row=[];cur=""}
-    else cur+=c; }
-  if(cur||row.length){row.push(cur);rows.push(row)}
-  return rows;
-}
-function rx(){return 8+Math.random()*Math.max(innerWidth-100,50)}
-function place(o){ o.el.style.transform="translate3d("+o.x+"px,"+(innerHeight-o.y-92)+"px,0)"; }
-function spawn(i,spread){
-  if(live[i]) return;
-  var el=document.createElement("div"); el.className="balloon";
-  var b=document.createElement("div"); b.className="b"; b.style.background=COLORS[Math.floor(Math.random()*COLORS.length)]; el.appendChild(b);
-  var o={el:el,x:rx(),y:spread?Math.random()*innerHeight:-150,v:22+Math.random()*20};
-  place(o);
-  el.addEventListener("click",function(){popOne(i)});
-  document.body.appendChild(el); live[i]=o;
-}
-var last=performance.now();
-(function tick(t){
-  var dt=Math.min((t-last)/1000,0.1); last=t;
-  for(var k in live){ var o=live[k]; o.y+=o.v*dt; if(o.y>innerHeight+40){ o.y=-150; o.x=rx(); } place(o); }
-  requestAnimationFrame(tick);
-})(last);
-function popOne(i){
-  var o=live[i]; if(!o) return; delete live[i]; var el=o.el;
-  el.firstChild.classList.add("pop"); setTimeout(function(){el.remove()},350);
-  var t=wishes[i].text; poppedSet[i]=1; savePopped();
-  var w=$("wish"); w.innerHTML="<small>Harapan untuk Bapelkes Mataram</small>"+esc(t);
-  w.classList.remove("hide"); clearTimeout(tm); tm=setTimeout(function(){w.classList.add("hide")},12000);
-  info();
-}
-$("wish").addEventListener("click",function(){$("wish").classList.add("hide")});
-$("rnd").addEventListener("click",function(){ var ids=Object.keys(live); if(ids.length) popOne(ids[Math.floor(Math.random()*ids.length)]); });
+  var COLORS = ["#ff5a7a","#ffb020","#2ec4b6","#7b61ff","#ff7a45","#3a86ff","#e63995","#20a85a","#f4c430","#00a6d6"];
+  var STORE_KEY = "balonHarapanDibaca_v2";
+  var BW = 64, BH = 120;          // ukuran balon
+  var RESPAWN_DELAY = 2500;       // ms, jeda sebelum balon yang dipecah muncul lagi dari bawah
 
-function merge(texts,first){
-  var have={}; wishes.forEach(function(w){have[w.text]=(have[w.text]||0)+1});
-  texts.forEach(function(t){
-    if(have[t]>0){have[t]--;return}
-    wishes.push({text:t}); var i=wishes.length-1; if(!poppedSet[i]) spawn(i,first);
+  var sky = document.getElementById("sky");
+  var counter = document.getElementById("counter");
+  var overlay = document.getElementById("overlay");
+  var card = document.getElementById("card");
+  var wishText = document.getElementById("wishText");
+  var wishLabel = document.getElementById("wishLabel");
+
+  // status "sudah dibaca" per HP (hanya untuk tanda ✓ dan penghitung)
+  var readSet = {};
+  try { readSet = JSON.parse(localStorage.getItem(STORE_KEY) || "{}") || {}; } catch(e){ readSet = {}; }
+  function saveRead(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(readSet)); } catch(e){} }
+  function updateCounter(){
+    var n = 0; for (var i=0;i<WISHES.length;i++) if (readSet[i]) n++;
+    counter.textContent = "Sudah dibaca " + n + " dari " + WISHES.length + " harapan";
+  }
+
+  function vw(){ return window.innerWidth; }
+  function vh(){ return window.innerHeight; }
+  function rand(a,b){ return a + Math.random()*(b-a); }
+
+  var balloons = [];
+
+  function placeAtBottom(b){
+    b.x = rand(8, Math.max(9, vw() - BW - 8));
+    b.y = vh() + rand(10, vh()*0.6);   // mulai sedikit di bawah layar, tersebar
+    b.speed = vh() / rand(20, 35);     // 20–35 detik untuk satu layar
+    b.phase = rand(0, Math.PI*2);
+    b.wobble = rand(10, 24);
+  }
+
+  for (var i=0;i<WISHES.length;i++){
+    var el = document.createElement("div");
+    el.className = "balloon" + (readSet[i] ? " read" : "");
+    el.setAttribute("role","button");
+    el.setAttribute("aria-label","Balon harapan " + (i+1));
+    var color = COLORS[i % COLORS.length];
+    el.style.setProperty("--c", color);
+    el.innerHTML = '<div class="body">' + (i+1) + '</div><div class="knot"></div><div class="string"></div>';
+    sky.appendChild(el);
+
+    var b = { i:i, el:el, color:color, x:0, y:0, speed:0, phase:0, wobble:0, hidden:false };
+    placeAtBottom(b);
+    // awal: sebar di seluruh tinggi layar agar tidak kosong
+    b.y = rand(vh()*0.15, vh() + vh()*0.4);
+    balloons.push(b);
+
+    (function(b){
+      el.addEventListener("click", function(ev){ ev.preventDefault(); pop(b); });
+    })(b);
+  }
+  updateCounter();
+
+  function burst(cx, cy, color){
+    for (var k=0;k<18;k++){
+      var p = document.createElement("div");
+      p.className = "piece";
+      p.style.left = cx + "px"; p.style.top = cy + "px";
+      p.style.background = k % 3 === 0 ? "#ffffff" : (k % 3 === 1 ? color : COLORS[(k*3) % COLORS.length]);
+      var ang = Math.random()*Math.PI*2, dist = rand(50,130);
+      p.style.setProperty("--dx", Math.cos(ang)*dist + "px");
+      p.style.setProperty("--dy", Math.sin(ang)*dist + "px");
+      p.style.setProperty("--r", rand(-360,360) + "deg");
+      document.body.appendChild(p);
+      setTimeout((function(p){ return function(){ p.remove(); }; })(p), 950);
+    }
+    var t = document.createElement("div");
+    t.className = "pop-text"; t.textContent = "POP!";
+    t.style.left = cx + "px"; t.style.top = cy + "px";
+    document.body.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 650);
+  }
+
+  function pop(b){
+    if (b.hidden) return;
+    var cx = b.x + BW/2, cy = b.y + 39;
+    burst(cx, cy, b.color);
+    b.hidden = true;
+    b.el.classList.add("hidden");
+
+    readSet[b.i] = true; saveRead();
+    b.el.classList.add("read");
+    updateCounter();
+
+    showWish(b);
+
+    // balon muncul lagi dari bawah setelah jeda
+    setTimeout(function(){
+      placeAtBottom(b);
+      b.y = vh() + rand(10, 60);
+      b.hidden = false;
+      b.el.classList.remove("hidden");
+    }, RESPAWN_DELAY);
+  }
+
+  function showWish(b){
+    wishLabel.textContent = "Harapan #" + (b.i+1);
+    wishText.textContent = WISHES[b.i];
+    card.style.setProperty("--cc", b.color);
+    overlay.classList.add("show");
+  }
+  function closeWish(){ overlay.classList.remove("show"); }
+  document.getElementById("closeBtn").addEventListener("click", closeWish);
+  overlay.addEventListener("click", function(e){ if (e.target === overlay) closeWish(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeWish(); });
+
+  document.getElementById("randomBtn").addEventListener("click", function(){
+    var H = vh();
+    var visible = balloons.filter(function(b){ return !b.hidden && b.y < H - 40 && b.y > -BH + 40; });
+    if (!visible.length) visible = balloons.filter(function(b){ return !b.hidden; });
+    if (!visible.length) return;
+    pop(visible[Math.floor(Math.random()*visible.length)]);
   });
-  info();
-}
-function load(first){
-  if(!CSV_URL){ if(first) merge(DEMO,true); return; }
-  fetch(CSV_URL+(CSV_URL.indexOf("?")>-1?"&":"?")+"t="+Date.now(),{cache:"no-store"})
-    .then(function(r){return r.text()})
-    .then(function(txt){
-      var rows=csv(txt).slice(1);
-      var texts=rows.map(function(r){ var v=(r[KOLOM_HARAPAN]!==undefined?r[KOLOM_HARAPAN]:r[r.length-1])||""; return v.replace(/\s+/g," ").trim(); }).filter(function(v){return v});
-      merge(texts,first);
-    })
-    .catch(function(){ if(first) $("info").textContent="Gagal memuat data harapan. Periksa link CSV dan koneksi internet."; });
-}
-load(true);
-if(CSV_URL) setInterval(function(){load(false)},REFRESH_DETIK*1000);
+
+  // gerak balon
+  var last = performance.now(), t0 = last;
+  function frame(now){
+    var dt = Math.min(0.05, (now - last)/1000); last = now;
+    var tt = (now - t0)/1000;
+    var W = vw();
+    for (var k=0;k<balloons.length;k++){
+      var b = balloons[k];
+      if (b.hidden) continue;
+      b.y -= b.speed * dt;
+      if (b.y < -BH - 10){
+        // lewat di atas layar → muncul lagi dari bawah (sudah dibaca maupun belum)
+        placeAtBottom(b);
+        b.y = vh() + rand(10, 80);
+      }
+      var x = b.x + Math.sin(tt*0.8 + b.phase) * b.wobble;
+      if (x > W - BW) x = W - BW;
+      if (x < 0) x = 0;
+      b.el.style.transform = "translate3d(" + x + "px," + b.y + "px,0)";
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  window.addEventListener("resize", function(){
+    var W = vw();
+    balloons.forEach(function(b){ if (b.x > W - BW - 8) b.x = rand(8, Math.max(9, W - BW - 8)); });
+  });
 })();
 </script>
 </body>
