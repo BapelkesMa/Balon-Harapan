@@ -15,11 +15,11 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(
 .top p{margin:.2rem 0 0;color:var(--mut);font-size:.9rem}
 .bar{position:absolute;z-index:5;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 1rem);display:flex;justify-content:center}
 button{font:inherit;border:0;border-radius:12px;padding:.7rem 1.2rem;background:var(--acc);color:#fff;font-weight:600;cursor:pointer}
-.balloon{position:absolute;bottom:-170px;width:74px;height:92px;border-radius:50% 50% 48% 48%;animation:rise linear infinite;cursor:pointer}
-.balloon::after{content:"";position:absolute;left:50%;bottom:-34px;width:2px;height:34px;background:var(--mut);opacity:.6}
-.balloon::before{content:"";position:absolute;left:18%;top:14%;width:16%;height:22%;border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(25deg)}
-.balloon.pop{animation:pop .35s ease-out forwards}
-@keyframes rise{from{transform:translateY(0)}to{transform:translateY(calc(-100vh - 330px))}}
+.balloon{position:absolute;left:0;top:0;width:74px;height:92px;cursor:pointer;will-change:transform}
+.b{position:relative;width:100%;height:100%;border-radius:50% 50% 48% 48%}
+.b::after{content:"";position:absolute;left:50%;bottom:-34px;width:2px;height:34px;background:var(--mut);opacity:.6}
+.b::before{content:"";position:absolute;left:18%;top:14%;width:16%;height:22%;border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(25deg)}
+.b.pop{animation:pop .35s ease-out forwards}
 @keyframes pop{to{transform:scale(1.8);opacity:0}}
 #wish{position:absolute;z-index:6;left:50%;top:46%;transform:translate(-50%,-50%);width:min(90vw,640px);background:var(--card);border:2px solid var(--acc);border-radius:20px;padding:1.4rem 1.5rem;text-align:center;font-size:clamp(1.1rem,3vw,1.6rem);line-height:1.45;box-shadow:0 12px 40px rgba(0,0,0,.25)}
 #wish small{display:block;color:var(--mut);font-size:.8rem;margin-bottom:.5rem}
@@ -58,20 +58,26 @@ function csv(s){var rows=[],row=[],cur="",q=false;
   if(cur||row.length){row.push(cur);rows.push(row)}
   return rows;
 }
+function rx(){return 8+Math.random()*Math.max(innerWidth-100,50)}
+function place(o){ o.el.style.transform="translate3d("+o.x+"px,"+(innerHeight-o.y-92)+"px,0)"; }
 function spawn(i,spread){
   if(live[i]) return;
   var el=document.createElement("div"); el.className="balloon";
-  el.style.left=(4+Math.random()*86)+"%";
-  el.style.background=COLORS[Math.floor(Math.random()*COLORS.length)];
-  el.style.animationDuration=(28+Math.random()*17)+"s";
-  if(spread) el.style.animationDelay="-"+(Math.random()*26)+"s";
-  el.addEventListener("animationiteration",function(e){ if(e.animationName==="rise") el.style.left=(4+Math.random()*86)+"%"; });
+  var b=document.createElement("div"); b.className="b"; b.style.background=COLORS[Math.floor(Math.random()*COLORS.length)]; el.appendChild(b);
+  var o={el:el,x:rx(),y:spread?Math.random()*innerHeight:-150,v:22+Math.random()*20};
+  place(o);
   el.addEventListener("click",function(){popOne(i)});
-  document.body.appendChild(el); live[i]=el;
+  document.body.appendChild(el); live[i]=o;
 }
+var last=performance.now();
+(function tick(t){
+  var dt=Math.min((t-last)/1000,0.1); last=t;
+  for(var k in live){ var o=live[k]; o.y+=o.v*dt; if(o.y>innerHeight+40){ o.y=-150; o.x=rx(); } place(o); }
+  requestAnimationFrame(tick);
+})(last);
 function popOne(i){
-  var el=live[i]; if(!el) return; delete live[i];
-  el.style.animationDelay="0s"; el.style.animationDuration=".35s"; el.classList.add("pop"); setTimeout(function(){el.remove()},350);
+  var o=live[i]; if(!o) return; delete live[i]; var el=o.el;
+  el.firstChild.classList.add("pop"); setTimeout(function(){el.remove()},350);
   var t=wishes[i].text; poppedSet[i]=1; savePopped();
   var w=$("wish"); w.innerHTML="<small>Harapan untuk Bapelkes Mataram</small>"+esc(t);
   w.classList.remove("hide"); clearTimeout(tm); tm=setTimeout(function(){w.classList.add("hide")},12000);
